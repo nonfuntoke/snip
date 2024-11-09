@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
 }
 
 class NicheDiscoveryTool {
-    private $api_key = 'AIzaSyC97fBWMaGXuDB0zmfz-c5FL1q8dRkfyS0';
+    private $api_key = 'KEY';
     private $table_name;
 
     public function __construct() {

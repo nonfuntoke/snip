@@ -588,7 +588,6 @@ class NicheAnalyzer {
         this.selectedContentFocus = '';
         this.retryAttempts = 3;
         this.retryDelay = 1000;
-        this.rateLimitDelay = 100;
         this.lastRequestTime = 0;
         this.conversationHistory = [];
         this.suggestions = {
@@ -807,63 +806,161 @@ class NicheAnalyzer {
         }
     }
 
-    async callGeminiAPI(formData) {
-        // Simulated API call for demonstration
+  async callGeminiAPI(formData) {
+        // Simulated API call with enhanced personalization
         return new Promise((resolve) => {
             setTimeout(() => {
+                const personalizedAnalysis = this.generatePersonalizedAnalysis(formData);
                 resolve({
                     success: true,
-                    analysis: [
-                        {
-                            title: `${formData.industry} Innovation Hub`,
-                            description: `Specialized solutions for ${formData.demographics} focusing on ${formData.contentFocus} content.`,
-                            icon: "🚀",
-                            metrics: {
-                                marketSize: "Expanding",
-                                competition: "Moderate",
-                                profitPotential: "High"
-                            },
-                            keyTopics: [
-                                `${formData.industry} trends and insights`,
-                                "Innovation strategies",
-                                "Market opportunities"
-                            ]
-                        },
-                        {
-                            title: `Digital ${formData.industry} Solutions`,
-                            description: "Modern solutions leveraging technology and digital transformation.",
-                            icon: "💡",
-                            metrics: {
-                                marketSize: "Large",
-                                competition: "Medium",
-                                profitPotential: "Very High"
-                            },
-                            keyTopics: [
-                                "Digital transformation",
-                                "Technology integration",
-                                "Process optimization"
-                            ]
-                        },
-                        {
-                            title: `${formData.industry} Education Platform`,
-                            description: "Professional development and learning resources.",
-                            icon: "📚",
-                            metrics: {
-                                marketSize: "Growing",
-                                competition: "Low",
-                                profitPotential: "High"
-                            },
-                            keyTopics: [
-                                "Professional training",
-                                "Skill development",
-                                "Industry certifications"
-                            ]
-                        }
-                    ]
+                    analysis: personalizedAnalysis
                 });
             }, 2000);
         });
     }
+
+    generatePersonalizedAnalysis(formData) {
+        const contentTypeMap = {
+            informational: {
+                focus: "educational content and industry insights",
+                style: "in-depth analysis and thought leadership",
+                format: "newsletters, whitepapers, and industry reports"
+            },
+            promotional: {
+                focus: "product highlights and special offers",
+                style: "persuasive and action-oriented messaging",
+                format: "promotional campaigns and limited-time offers"
+            },
+            educational: {
+                focus: "skill development and practical knowledge",
+                style: "step-by-step guides and tutorials",
+                format: "course-style emails and learning series"
+            }
+        };
+
+        const goalStrategies = {
+            engagement: "community building and interactive content",
+            leads: "lead magnets and value-driven nurturing",
+            sales: "conversion optimization and product showcases",
+            awareness: "brand storytelling and thought leadership",
+            retention: "customer success stories and loyalty programs"
+        };
+
+        const contentType = contentTypeMap[formData.contentFocus];
+        const goalStrategy = goalStrategies[formData.campaignGoals];
+        const trends = formData.trends.split(',').map(trend => trend.trim());
+
+        return [
+            {
+                title: `${formData.industry} Innovation Hub`,
+                description: `Specialized ${contentType.focus} tailored for ${formData.demographics}, focusing on ${goalStrategy}.`,
+                icon: "🚀",
+                metrics: {
+                    marketSize: this.analyzeMarketSize(formData.industry, formData.demographics),
+                    competition: this.analyzeCompetition(formData.industry, formData.contentFocus),
+                    profitPotential: this.analyzeProfitPotential(formData.campaignGoals, formData.demographics)
+                },
+                keyTopics: [
+                    `Latest ${formData.industry} trends: ${trends[0] || 'Industry innovations'}`,
+                    `${contentType.style} focusing on ${goalStrategy}`,
+                    `${contentType.format} optimization`
+                ]
+            },
+            {
+                title: `${this.getPersonalizedTitle(formData)}`,
+                description: `${this.getPersonalizedDescription(formData, contentType, goalStrategy)}`,
+                icon: this.getRelevantIcon(formData.contentFocus),
+                metrics: {
+                    marketSize: this.analyzeSecondaryMarket(formData),
+                    competition: this.analyzeSecondaryCompetition(formData),
+                    profitPotential: this.analyzeSecondaryPotential(formData)
+                },
+                keyTopics: this.generateKeyTopics(formData, contentType, trends)
+            },
+            {
+                title: `${formData.industry} Growth Accelerator`,
+                description: `Strategic ${formData.contentFocus} content designed for ${formData.demographics}, emphasizing ${goalStrategy}.`,
+                icon: "💡",
+                metrics: {
+                    marketSize: "Expanding",
+                    competition: this.analyzeCompetition(formData.industry, formData.contentFocus),
+                    profitPotential: "High"
+                },
+                keyTopics: [
+                    `${formData.industry} growth strategies`,
+                    trends[1] || 'Market opportunities',
+                    `${contentType.format} best practices`
+                ]
+            }
+        ];
+    }
+
+    getPersonalizedTitle(formData) {
+        const titles = {
+            technology: "Tech Innovation Lab",
+            finance: "Financial Freedom Hub",
+            healthcare: "Health & Wellness Center",
+            education: "Learning Excellence Hub",
+            ecommerce: "E-commerce Success Lab",
+            lifestyle: "Lifestyle Transformation Hub",
+            travel: "Travel Experience Lab",
+            food: "Culinary Innovation Center",
+            fitness: "Fitness Achievement Hub"
+        };
+        return titles[formData.industry] || `${formData.industry} Success Center`;
+    }
+
+    getPersonalizedDescription(formData, contentType, goalStrategy) {
+        return `Customized ${contentType.focus} for ${formData.demographics}, delivering ${contentType.style} through ${contentType.format}, optimized for ${goalStrategy}.`;
+    }
+
+    getRelevantIcon(contentFocus) {
+        const icons = {
+            informational: "📚",
+            promotional: "🎯",
+            educational: "🎓"
+        };
+        return icons[contentFocus] || "💡";
+    }
+
+    analyzeMarketSize(industry, demographics) {
+        // Add complex market size analysis logic
+        return "Large and Growing";
+    }
+
+    analyzeCompetition(industry, contentFocus) {
+        // Add competition analysis logic
+        return "Moderate with Opportunities";
+    }
+
+    analyzeProfitPotential(goals, demographics) {
+        // Add profit potential analysis logic
+        return "High ROI Potential";
+    }
+
+    analyzeSecondaryMarket(formData) {
+        // Add secondary market analysis logic
+        return "Emerging";
+    }
+
+    analyzeSecondaryCompetition(formData) {
+        // Add secondary competition analysis logic
+        return "Low to Moderate";
+    }
+
+    analyzeSecondaryPotential(formData) {
+        // Add secondary potential analysis logic
+        return "Very High";
+    }
+
+    generateKeyTopics(formData, contentType, trends) {
+        return [
+            `${formData.industry} ${contentType.focus}`,
+            trends[0] || 'Industry trends',
+            `${contentType.format} strategies`
+        ];
+    }
+
 
     displayResults(analysis) {
         const resultsSection = document.querySelector('.results-section');
@@ -947,7 +1044,7 @@ class NicheAnalyzer {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+jQuery(document).ready(function($) {
     new NicheAnalyzer();
 });
 </script>
